@@ -23,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->loadFactoriesFrom(__DIR__.'/database/factories');
     }
 }

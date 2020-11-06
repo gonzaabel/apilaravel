@@ -18,5 +18,5 @@ Route::get('/', function () {
 });
 
 Route::get('/users', function () {
-    return new UserResource(User::find(1));
+    return new UserResource(User::all());
 });
