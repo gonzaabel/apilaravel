@@ -1,4 +1,6 @@
 <?php
+use App\Http\Resources\User as UserResource;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,5 +14,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
+});
+
+Route::get('/users', function () {
+    return new UserResource(User::find(1));
 });
