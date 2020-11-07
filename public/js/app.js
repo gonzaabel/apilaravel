@@ -1943,6 +1943,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1958,7 +1961,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 Vue.component('users-list', {
   props: ['user'],
-  template: '<tr><td>{{user.id}}</td><td>{{user.name}}</td><td>{{user.email}}</td><td><div class="btn-group"><a href="#" class="btn btn-secondary">Editar</a><a href="#" class="btn btn-danger">Borrar</a></div></td></tr>'
+  template: "<tr>\n                    <td>{{user.id}}</td>\n                    <td>{{user.name}}</td>\n                    <td>{{user.email}}</td>\n                    <td>\n                        <div class=\"btn-group\">\n                            <a href=\"#\" class=\"btn btn-secondary\">Update</a>\n                            <a href=\"#\" class=\"btn btn-danger\">Delete</a>\n                        </div>\n                    </td>\n                </tr>"
 });
 
 /***/ }),
@@ -37557,13 +37560,11 @@ var render = function() {
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-offset-1 col-10" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header font-weight-bold" }, [
-            _vm._v("Users List")
-          ]),
+          _vm._m(0),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c("table", { staticClass: "table" }, [
-              _vm._m(0),
+              _vm._m(1),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -37585,6 +37586,23 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h1", { staticClass: "float-left" }, [_vm._v("Users List")]),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "float-right btn btn-lg btn-primary",
+          attrs: { href: "#" }
+        },
+        [_vm._v("Create New User")]
+      )
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

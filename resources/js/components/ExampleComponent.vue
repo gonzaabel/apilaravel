@@ -3,7 +3,10 @@
         <div class="row justify-content-center">
             <div class="col-offset-1 col-10">
                 <div class="card">
-                    <div class="card-header font-weight-bold">Users List</div>
+                    <div class="card-header">
+                        <h1 class="float-left">Users List</h1>
+                        <a href="#" class="float-right btn btn-lg btn-primary">Create New User</a>
+                    </div>
 
                     <div class="card-body">
                         <table class="table">
@@ -49,6 +52,16 @@
 
     Vue.component('users-list', {
         props: ['user'],
-        template: '<tr><td>{{user.id}}</td><td>{{user.name}}</td><td>{{user.email}}</td><td><div class="btn-group"><a href="#" class="btn btn-secondary">Editar</a><a href="#" class="btn btn-danger">Borrar</a></div></td></tr>'
+        template: `<tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="#" class="btn btn-secondary">Update</a>
+                                <a href="#" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>`
     });
 </script>
