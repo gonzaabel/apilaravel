@@ -5,11 +5,15 @@
                 <div class="card">
                     <div class="card-header">
                         <h1 class="float-left">Users List</h1>
-                        <a href="#" class="float-right btn btn-lg btn-primary">Create New User</a>
+                        <a href="#user-create" class="float-right btn btn-lg btn-primary">Create New User</a>
+                    </div>
+
+                    <div class="card-body" v-if="users.length == 0">
+                        <b>Hey! I can't find any user... What are you waiting for create someone?</b>
                     </div>
 
                     <div class="card-body">
-                        <table class="table">
+                        <table class="table" v-if="users.length > 0">
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -29,9 +33,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-offset-1">
-                
-            </div>
+            <div class="col-offset-1"></div>
         </div>
     </div>
 </template>
@@ -40,7 +42,9 @@
 
     export default {
         data() {
-            return {users: {}}
+            return {
+                users: []
+            }
         },
         mounted() {
             var self = this;
@@ -64,4 +68,5 @@
                         </td>
                     </tr>`
     });
+
 </script>
