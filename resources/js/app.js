@@ -27,10 +27,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-var test = new Vue({
+var app = new Vue({
     delimiters : ['[[',']]'],
     el: '#app',
-    data: {
-		message: 'Hello Vue!'
-	}
 });

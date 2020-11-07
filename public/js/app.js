@@ -1924,10 +1924,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      users: {}
+    };
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    var self = this;
+    axios.get('users').then(function (response) {
+      self.users = response.data;
+    });
   }
+});
+Vue.component('users-list', {
+  props: ['user'],
+  template: '<tr><td>{{user.id}}</td><td>{{user.name}}</td><td>{{user.email}}</td><td><div class="btn-group"><a href="#" class="btn btn-secondary">Editar</a><a href="#" class="btn btn-danger">Borrar</a></div></td></tr>'
 });
 
 /***/ }),
@@ -37522,28 +37553,51 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "row justify-content-center" }, [
+      _c("div", { staticClass: "col-offset-1 col-10" }, [
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-header font-weight-bold" }, [
+            _vm._v("Users List")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("table", { staticClass: "table" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.users, function(user) {
+                  return _c("users-list", {
+                    key: user.id,
+                    attrs: { user: user }
+                  })
+                }),
+                1
+              )
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-offset-1" })
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-md-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an example component.\n                "
-              )
-            ])
-          ])
-        ])
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Id")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("E-mail")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
       ])
     ])
   }
@@ -49748,12 +49802,9 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-var test = new Vue({
+var app = new Vue({
   delimiters: ['[[', ']]'],
-  el: '#app',
-  data: {
-    message: 'Hello Vue!'
-  }
+  el: '#app'
 });
 
 /***/ }),
