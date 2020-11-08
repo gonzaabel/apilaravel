@@ -19,42 +19,42 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:api')->get('/users', function () {
+Route::get('/users', function () {
     return new UserResource(User::all());
 });
 
-Route::middleware('auth:api')->post('/users/create', function(Request $request){
+Route::post('/users/create', function(Request $request){
 
 	$rta = new UserResource(User::create($request->all()));
 
 	if(!empty($rta->resource)) {
-		return "{msg: 'User succesfully created'}";
+		return "{}";
 	}
 
-	return "{msg: 'Error: User could not be created.'}";
+	throw new InternalErrorException("User could not be created.");
 
 });
 
-Route::middleware('auth:api')->post('/users/update', function(Request $request){
+Route::post('/users/update', function(Request $request){
 
 	$rta = new UserResource(User::save($request->all()));
 
 	if(!empty($rta->resource)) {
-		return "{msg: 'User succesfully updated'}";
+		return "{}";
 	}
 
-	return "{msg: 'Error: User could not be updated.'}";
+	throw new InternalErrorException("User could not be updated.");
 
 });
 
-Route::middleware('auth:api')->get('/users/delete/{id}', function($id){
+Route::delete('/users/delete/', function(Request $request){
 
-	$rta = new UserResource(User::destroy($id));
+	$rta = new UserResource(User::destroy($request->id));
 
 	if(!empty($rta->resource)) {
-		return "{msg: 'User succesfully deleted'}";
+		return "{}";
 	}
 
-	return "{msg: 'Error: User could not be deleted.'}";
+	throw new InternalErrorException("User could not be deleted.");
 
 });

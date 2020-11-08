@@ -40,16 +40,18 @@
 
 <script>
 
+    var userList = { users: [] };
+
     export default {
         data() {
-            return {
-                users: []
-            }
+            return userList;
         },
         mounted() {
             var self = this;
-            axios.get('users').then(response => {
-                self.users = response.data;
+            axios.get('api/users').then(response => {
+                for (var user in response.data) {
+                    self.users.push(response.data[user]);
+                }
             });
         }
     }
@@ -63,10 +65,30 @@
                         <td>
                             <div class="btn-group">
                                 <a href="#" class="btn btn-secondary">Update</a>
-                                <a href="#" class="btn btn-danger">Delete</a>
+                                <a href="#" class="btn btn-danger" @click='deleteUser(user.id)'>Delete</a>
                             </div>
                         </td>
-                    </tr>`
+                    </tr>`,
+        methods: {
+            deleteUser(id) {
+
+                var data = {
+                    data: {
+                        'id': id
+                    }
+                };
+
+                axios.delete('api/users/delete/', data)
+                .then(response => {
+                    let index = userList.users.findIndex(user => user.id == id);
+                    userList.users.splice(index, 1);
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("User could not be deleted, please, try again.");
+                });
+            }
+        }
     });
 
 </script>

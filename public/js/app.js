@@ -1948,22 +1948,43 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+var userList = {
+  users: []
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {
-      users: []
-    };
+    return userList;
   },
   mounted: function mounted() {
     var self = this;
-    axios.get('users').then(function (response) {
-      self.users = response.data;
+    axios.get('api/users').then(function (response) {
+      for (var user in response.data) {
+        self.users.push(response.data[user]);
+      }
     });
   }
 });
 Vue.component('users-list', {
   props: ['user'],
-  template: "<tr>\n                    <td>{{user.id}}</td>\n                    <td>{{user.name}}</td>\n                    <td>{{user.email}}</td>\n                    <td>\n                        <div class=\"btn-group\">\n                            <a href=\"#\" class=\"btn btn-secondary\">Update</a>\n                            <a href=\"#\" class=\"btn btn-danger\">Delete</a>\n                        </div>\n                    </td>\n                </tr>"
+  template: "<tr>\n                    <td>{{user.id}}</td>\n                    <td>{{user.name}}</td>\n                    <td>{{user.email}}</td>\n                    <td>\n                        <div class=\"btn-group\">\n                            <a href=\"#\" class=\"btn btn-secondary\">Update</a>\n                            <a href=\"#\" class=\"btn btn-danger\" @click='deleteUser(user.id)'>Delete</a>\n                        </div>\n                    </td>\n                </tr>",
+  methods: {
+    deleteUser: function deleteUser(id) {
+      var data = {
+        data: {
+          'id': id
+        }
+      };
+      axios["delete"]('api/users/delete/', data).then(function (response) {
+        var index = userList.users.findIndex(function (user) {
+          return user.id == id;
+        });
+        userList.users.splice(index, 1);
+      })["catch"](function (error) {
+        console.log(error);
+        alert("User could not be deleted, please, try again.");
+      });
+    }
+  }
 });
 
 /***/ }),
