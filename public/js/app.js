@@ -37884,12 +37884,12 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "container" },
+    { staticClass: "container", staticStyle: { "min-width": "700px" } },
     [
       _c("UsersFormComponent", { attrs: { users: _vm.users, User: _vm.User } }),
       _vm._v(" "),
       _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-offset-1 col-10" }, [
+        _c("div", { staticClass: "col-offset-1 col-sm-10" }, [
           _c("div", { staticClass: "card" }, [
             _c("div", { staticClass: "card-header" }, [
               _c("h1", { staticClass: "float-left" }, [_vm._v("Users List")]),

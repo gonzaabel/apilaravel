@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
+    <div class="container" style="min-width: 700px">
         <UsersFormComponent v-bind:users="users" v-bind:User="User"></UsersFormComponent>
 
         <div class="row justify-content-center">
-            <div class="col-offset-1 col-10">
+            <div class="col-offset-1 col-sm-10">
                 <div class="card">
                     <div class="card-header">
                         <h1 class="float-left">Users List</h1>
