@@ -25,19 +25,19 @@ Route::get('/users', function () {
 
 Route::post('/users/create', function(Request $request){
 
-	$rta = new UserResource(User::create($request->all()));
+	$user = User::create($request->all());
 
-	if(!empty($rta->resource)) {
-		return "{}";
+	if(!empty($user)) {
+		return new UserResource($user->fresh());
 	}
 
 	throw new InternalErrorException("User could not be created.");
 
 });
 
-Route::post('/users/update', function(Request $request){
+Route::put('/users/update', function(Request $request){
 
-	$rta = new UserResource(User::save($request->all()));
+	$rta = new UserResource(User::where('id', $request->id)->update($request->all()));
 
 	if(!empty($rta->resource)) {
 		return "{}";

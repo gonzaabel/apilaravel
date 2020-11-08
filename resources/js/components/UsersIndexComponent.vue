@@ -1,17 +1,17 @@
 <template>
     <div class="container">
-        <UsersFormComponent v-if="isOnForm"></UsersFormComponent>
+        <UsersFormComponent v-bind:users="users" v-bind:User="User"></UsersFormComponent>
 
-        <div class="row justify-content-center" v-if="isOnIndex">
+        <div class="row justify-content-center">
             <div class="col-offset-1 col-10">
                 <div class="card">
                     <div class="card-header">
                         <h1 class="float-left">Users List</h1>
-                        <a href="#" class="float-right btn btn-lg btn-primary" @click="goToForm">Create New User</a>
+                        <a href="#" class="float-right btn btn-lg btn-primary" data-toggle="modal" data-target="#userFormModal" @click="openModal">Create New User</a>
                     </div>
 
                     <div class="card-body" v-if="users.length == 0">
-                        <b>Hey! I can't find any user... What are you waiting for create someone?</b>
+                        <b>Hey! I couldn't find any user... What are you waiting to create someone?</b>
                     </div>
 
                     <div class="card-body">
@@ -43,9 +43,17 @@
 
 <script>
 
-    import UsersFormComponent from './UsersFormComponent';
+    import UsersFormComponent from './UsersFormComponent.vue';
 
-    var indexPageData = { users: [], isOnForm: false, isOnIndex: true };
+    var indexPageData = { 
+        users: [], 
+        User: {
+            id: null,
+            name: "",
+            email: "",
+            password: "password"
+        }
+    };
 
     export default {
         data() {
@@ -63,9 +71,14 @@
             });
         },
         methods: {
-            goToForm(){
-                this.isOnForm = true;
-                this.isOnIndex = false;
+            openModal() {
+                $("#btnSubmit").attr('disabled', false);
+                this.cleanUserData();
+            },
+            cleanUserData() {
+                this.User.id = null;
+                this.User.name = '';
+                this.User.email = '';
             }
         }
     }
@@ -78,7 +91,7 @@
                         <td>{{user.email}}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="#" class="btn btn-secondary">Update</a>
+                                <a href="#" class="btn btn-secondary" data-toggle="modal" @click="setUserData(user)" data-target="#userFormModal">Update</a>
                                 <a href="#" class="btn btn-danger" @click='deleteUser(user.id)'>Delete</a>
                             </div>
                         </td>
@@ -86,7 +99,14 @@
         methods: {
             deleteUser(id) {
 
-                if(!confirm("Do you really want to delete that poor User, ID #%s?", id)) {
+                var user = this.findUserById(id);
+
+                if(!user) {
+                    alert("There is not an user with the ID #"+id);
+                    return false;
+                }
+
+                if(!confirm("Do you really want to delete that poor User, ID #"+id+", Name "+user.name+"?")) {
                     return false;
                 }
 
@@ -105,6 +125,22 @@
                     console.log(error);
                     alert("User could not be deleted, please, try again.");
                 });
+            },
+            findUserById(id) {
+                let user = false;
+                for (var u in indexPageData.users) {
+                    if(indexPageData.users[u].id === id) {
+                        user = indexPageData.users[u];
+                        break;
+                    }
+                }
+                return user;
+            },
+            setUserData(user) {
+                $("#btnSubmit").attr('disabled', false);
+                indexPageData.User.id = user.id;
+                indexPageData.User.name = user.name;
+                indexPageData.User.email = user.email;
             }
         }
     });

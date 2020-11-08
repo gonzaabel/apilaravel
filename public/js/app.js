@@ -1932,29 +1932,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {
-      User: {
-        id: "",
-        name: "",
-        email: ""
-      },
-      isOnIndex: false,
-      isOnForm: true
-    };
+    return {};
   },
-  render: function render() {},
+  props: ['User', 'users'],
   methods: {
-    storeUserName: function storeUserName() {
-      this.User.name = Document.getElementById("#UserName").value;
+    saveUser: function saveUser() {
+      $("#btnSubmit").attr('disabled', true);
+      var self = this;
+
+      if (this.User.id > 0) {
+        axios.put('api/users/update', this.User).then(function (response) {
+          for (var u in self.users) {
+            if (self.users[u].id === self.User.id) {
+              self.users[u].id = self.User.id;
+              self.users[u].name = self.User.name;
+              self.users[u].email = self.User.email;
+              break;
+            }
+          }
+
+          self.closeModal();
+        })["catch"](function (error) {
+          console.log(error);
+          alert("User could not be updated, please, try again.");
+        });
+      } else {
+        axios.post('api/users/create', this.User).then(function (response) {
+          self.users.push(response.data);
+          self.closeModal();
+        })["catch"](function (error) {
+          console.log(error);
+          alert("User could not be created, please, try again.");
+        });
+      }
     },
-    storeUserEmail: function storeUserEmail() {
-      this.User.email = Document.getElementById("#UserEmail").value;
-    },
-    goToIndex: function goToIndex() {
-      this.isOnIndex = true;
-      this.isOnForm = false;
+    closeModal: function closeModal() {
+      $("#userFormModal").modal("hide");
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
     }
   }
 });
@@ -1970,7 +1989,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _UsersFormComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UsersFormComponent */ "./resources/js/components/UsersFormComponent.vue");
+/* harmony import */ var _UsersFormComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UsersFormComponent.vue */ "./resources/js/components/UsersFormComponent.vue");
 //
 //
 //
@@ -2017,15 +2036,19 @@ __webpack_require__.r(__webpack_exports__);
 
 var indexPageData = {
   users: [],
-  isOnForm: false,
-  isOnIndex: true
+  User: {
+    id: null,
+    name: "",
+    email: "",
+    password: "password"
+  }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return indexPageData;
   },
   components: {
-    UsersFormComponent: _UsersFormComponent__WEBPACK_IMPORTED_MODULE_0__["default"]
+    UsersFormComponent: _UsersFormComponent_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   mounted: function mounted() {
     var self = this;
@@ -2036,18 +2059,30 @@ var indexPageData = {
     });
   },
   methods: {
-    goToForm: function goToForm() {
-      this.isOnForm = true;
-      this.isOnIndex = false;
+    openModal: function openModal() {
+      $("#btnSubmit").attr('disabled', false);
+      this.cleanUserData();
+    },
+    cleanUserData: function cleanUserData() {
+      this.User.id = null;
+      this.User.name = '';
+      this.User.email = '';
     }
   }
 });
 Vue.component('users-list', {
   props: ['user'],
-  template: "<tr>\n                    <td>#{{user.id}}</td>\n                    <td>{{user.name}}</td>\n                    <td>{{user.email}}</td>\n                    <td>\n                        <div class=\"btn-group\">\n                            <a href=\"#\" class=\"btn btn-secondary\">Update</a>\n                            <a href=\"#\" class=\"btn btn-danger\" @click='deleteUser(user.id)'>Delete</a>\n                        </div>\n                    </td>\n                </tr>",
+  template: "<tr>\n                    <td>#{{user.id}}</td>\n                    <td>{{user.name}}</td>\n                    <td>{{user.email}}</td>\n                    <td>\n                        <div class=\"btn-group\">\n                            <a href=\"#\" class=\"btn btn-secondary\" data-toggle=\"modal\" @click=\"setUserData(user)\" data-target=\"#userFormModal\">Update</a>\n                            <a href=\"#\" class=\"btn btn-danger\" @click='deleteUser(user.id)'>Delete</a>\n                        </div>\n                    </td>\n                </tr>",
   methods: {
     deleteUser: function deleteUser(id) {
-      if (!confirm("Do you really want to delete that poor User, ID #%s?", id)) {
+      var user = this.findUserById(id);
+
+      if (!user) {
+        alert("There is not an user with the ID #" + id);
+        return false;
+      }
+
+      if (!confirm("Do you really want to delete that poor User, ID #" + id + ", Name " + user.name + "?")) {
         return false;
       }
 
@@ -2065,6 +2100,24 @@ Vue.component('users-list', {
         console.log(error);
         alert("User could not be deleted, please, try again.");
       });
+    },
+    findUserById: function findUserById(id) {
+      var user = false;
+
+      for (var u in indexPageData.users) {
+        if (indexPageData.users[u].id === id) {
+          user = indexPageData.users[u];
+          break;
+        }
+      }
+
+      return user;
+    },
+    setUserData: function setUserData(user) {
+      $("#btnSubmit").attr('disabled', false);
+      indexPageData.User.id = user.id;
+      indexPageData.User.name = user.name;
+      indexPageData.User.email = user.email;
     }
   }
 });
@@ -37661,67 +37714,153 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.isOnIndex === false
-    ? _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-offset-1 col-10" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _c("h1", { staticClass: "float-left" }, [_vm._v("Create User")]),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  staticClass: "float-right btn btn-lg btn-primary",
-                  attrs: { href: "#user-index" },
-                  on: { click: _vm.goToIndex }
-                },
-                [_vm._v("User List")]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c("form", [
+  return _c(
+    "div",
+    {
+      staticClass: "modal fade",
+      attrs: { id: "userFormModal", tabindex: "-1" }
+    },
+    [
+      _c("div", { staticClass: "modal-dialog" }, [
+        _c("div", { staticClass: "modal-content" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "modal-body" }, [
+            _c(
+              "form",
+              {
+                staticClass: "form",
+                attrs: { method: "POST" },
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.saveUser($event)
+                  }
+                }
+              },
+              [
+                _vm.User.id > 0
+                  ? _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.User.id,
+                          expression: "User.id"
+                        }
+                      ],
+                      attrs: { type: "hidden", name: "id" },
+                      domProps: { value: _vm.User.id },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.User, "id", $event.target.value)
+                        }
+                      }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
                 _c("label", { attrs: { for: "name" } }, [_vm._v("Username:")]),
                 _vm._v(" "),
                 _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.User.name,
+                      expression: "User.name"
+                    }
+                  ],
+                  staticClass: "form-control",
                   attrs: {
                     id: "UserName",
                     type: "textbox",
                     name: "name",
-                    required: "required",
-                    value: ""
+                    required: "required"
                   },
-                  on: { keyUp: _vm.storeUserName }
+                  domProps: { value: _vm.User.name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.User, "name", $event.target.value)
+                    }
+                  }
                 }),
                 _vm._v(" "),
                 _c("label", { attrs: { for: "email" } }, [_vm._v("Email:")]),
                 _vm._v(" "),
                 _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.User.email,
+                      expression: "User.email"
+                    }
+                  ],
+                  staticClass: "form-control",
                   attrs: {
                     id: "UserEmail",
                     type: "email",
                     name: "email",
-                    required: "required",
-                    value: ""
+                    required: "required"
                   },
-                  on: { keyUp: _vm.storeUserEmail }
+                  domProps: { value: _vm.User.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.User, "email", $event.target.value)
+                    }
+                  }
                 }),
+                _vm._v(" "),
+                _c("br"),
                 _vm._v(" "),
                 _c(
                   "button",
-                  { staticClass: "btn btn-success", attrs: { type: "submit" } },
-                  [_vm._v("Enviar")]
+                  {
+                    staticClass: "btn btn-success btn-lg btn-block",
+                    attrs: { id: "btnSubmit", type: "submit" }
+                  },
+                  [_vm._v("Save")]
                 )
-              ])
-            ])
+              ]
+            )
           ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-offset-1" })
+        ])
       ])
-    : _vm._e()
+    ]
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h5", { staticClass: "modal-title" }, [_vm._v("Create User")]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -37747,62 +37886,62 @@ var render = function() {
     "div",
     { staticClass: "container" },
     [
-      _vm.isOnForm ? _c("UsersFormComponent") : _vm._e(),
+      _c("UsersFormComponent", { attrs: { users: _vm.users, User: _vm.User } }),
       _vm._v(" "),
-      _vm.isOnIndex
-        ? _c("div", { staticClass: "row justify-content-center" }, [
-            _c("div", { staticClass: "col-offset-1 col-10" }, [
-              _c("div", { staticClass: "card" }, [
-                _c("div", { staticClass: "card-header" }, [
-                  _c("h1", { staticClass: "float-left" }, [
-                    _vm._v("Users List")
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "float-right btn btn-lg btn-primary",
-                      attrs: { href: "#" },
-                      on: { click: _vm.goToForm }
-                    },
-                    [_vm._v("Create New User")]
-                  )
-                ]),
-                _vm._v(" "),
-                _vm.users.length == 0
-                  ? _c("div", { staticClass: "card-body" }, [
-                      _c("b", [
-                        _vm._v(
-                          "Hey! I can't find any user... What are you waiting for create someone?"
-                        )
-                      ])
-                    ])
-                  : _vm._e(),
-                _vm._v(" "),
-                _c("div", { staticClass: "card-body" }, [
-                  _vm.users.length > 0
-                    ? _c("table", { staticClass: "table" }, [
-                        _vm._m(0),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          _vm._l(_vm.users, function(user) {
-                            return _c("users-list", {
-                              key: user.id,
-                              attrs: { user: user }
-                            })
-                          }),
-                          1
-                        )
-                      ])
-                    : _vm._e()
-                ])
-              ])
+      _c("div", { staticClass: "row justify-content-center" }, [
+        _c("div", { staticClass: "col-offset-1 col-10" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header" }, [
+              _c("h1", { staticClass: "float-left" }, [_vm._v("Users List")]),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "float-right btn btn-lg btn-primary",
+                  attrs: {
+                    href: "#",
+                    "data-toggle": "modal",
+                    "data-target": "#userFormModal"
+                  },
+                  on: { click: _vm.openModal }
+                },
+                [_vm._v("Create New User")]
+              )
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-offset-1" })
+            _vm.users.length == 0
+              ? _c("div", { staticClass: "card-body" }, [
+                  _c("b", [
+                    _vm._v(
+                      "Hey! I couldn't find any user... What are you waiting to create someone?"
+                    )
+                  ])
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _vm.users.length > 0
+                ? _c("table", { staticClass: "table" }, [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(_vm.users, function(user) {
+                        return _c("users-list", {
+                          key: user.id,
+                          attrs: { user: user }
+                        })
+                      }),
+                      1
+                    )
+                  ])
+                : _vm._e()
+            ])
           ])
-        : _vm._e()
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-offset-1" })
+      ])
     ],
     1
   )

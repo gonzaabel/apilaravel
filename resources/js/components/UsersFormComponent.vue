@@ -1,24 +1,26 @@
 <template>
-    <div class="row justify-content-center" v-if="isOnIndex === false">
-        <div class="col-offset-1 col-10">
-            <div class="card">
-                <div class="card-header">
-                    <h1 class="float-left">Create User</h1>
-                    <a href="#user-index" class="float-right btn btn-lg btn-primary" @click="goToIndex">User List</a>
+    <div class="modal fade" id="userFormModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-
-                <div class="card-body">
-                    <form>
+                <div class="modal-body">
+                    <form class="form" method="POST" v-on:submit.prevent="saveUser">
+                        <input type="hidden" name="id" v-if="User.id > 0" v-model="User.id">
                         <label for="name">Username:</label>
-                        <input id="UserName" type="textbox" name="name" required="required" @keyUp="storeUserName" value="">
+                        <input id="UserName" type="textbox" name="name" class="form-control" required="required" v-model="User.name">
                         <label for="email">Email:</label>
-                        <input id="UserEmail" type="email" name="email" required="required" @keyUp="storeUserEmail" value="">
-                        <button type="submit" class="btn btn-success">Enviar</button>
+                        <input id="UserEmail" type="email" name="email" class="form-control" required="required" v-model="User.email">
+                        <br>
+                        <button id="btnSubmit" type="submit" class="btn btn-success btn-lg btn-block">Save</button>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="col-offset-1"></div>
     </div>
 </template>
 
@@ -26,30 +28,48 @@
 
     export default {
         data(){
-            return { 
-                User: {
-                    id: "",
-                    name: "",
-                    email: "",
-                },
-                isOnIndex: false,
-                isOnForm: true,
-            }
+            return {}
         },
-        render(){
-
-        },
+        props: ['User', 'users'],
         methods: {
-            storeUserName() {
-                this.User.name = Document.getElementById("#UserName").value;
+            saveUser() {
+                $("#btnSubmit").attr('disabled', true);
+                var self = this;
+
+                if(this.User.id > 0) {
+                    axios.put('api/users/update', this.User)
+                    .then(response => {
+                        for (var u in self.users) {
+                            if(self.users[u].id === self.User.id) {
+                                self.users[u].id = self.User.id;
+                                self.users[u].name = self.User.name;
+                                self.users[u].email = self.User.email;
+                                break;
+                            } 
+                        }
+                        self.closeModal();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert("User could not be updated, please, try again.");
+                    });
+                } else {                
+                    axios.post('api/users/create', this.User)
+                    .then(response => {
+                        self.users.push(response.data);
+                        self.closeModal();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert("User could not be created, please, try again.");
+                    });
+                }
             },
-            storeUserEmail() {
-                this.User.email = Document.getElementById("#UserEmail").value;
+            closeModal() {
+                $("#userFormModal").modal("hide");
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
             },
-            goToIndex() {
-                this.isOnIndex = true;
-                this.isOnForm = false;
-            }
         }
     }
 	
