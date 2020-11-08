@@ -1,11 +1,13 @@
 <template>
     <div class="container">
-        <div class="row justify-content-center">
+        <UsersFormComponent v-if="isOnForm"></UsersFormComponent>
+
+        <div class="row justify-content-center" v-if="isOnIndex">
             <div class="col-offset-1 col-10">
                 <div class="card">
                     <div class="card-header">
                         <h1 class="float-left">Users List</h1>
-                        <a href="#user-create" class="float-right btn btn-lg btn-primary">Create New User</a>
+                        <a href="#" class="float-right btn btn-lg btn-primary" @click="goToForm">Create New User</a>
                     </div>
 
                     <div class="card-body" v-if="users.length == 0">
@@ -38,13 +40,19 @@
     </div>
 </template>
 
+
 <script>
 
-    var userList = { users: [] };
+    import UsersFormComponent from './UsersFormComponent';
+
+    var indexPageData = { users: [], isOnForm: false, isOnIndex: true };
 
     export default {
         data() {
-            return userList;
+            return indexPageData;
+        },
+        components: {
+            UsersFormComponent
         },
         mounted() {
             var self = this;
@@ -53,6 +61,12 @@
                     self.users.push(response.data[user]);
                 }
             });
+        },
+        methods: {
+            goToForm(){
+                this.isOnForm = true;
+                this.isOnIndex = false;
+            }
         }
     }
 
@@ -80,8 +94,8 @@
 
                 axios.delete('api/users/delete/', data)
                 .then(response => {
-                    let index = userList.users.findIndex(user => user.id == id);
-                    userList.users.splice(index, 1);
+                    let index = indexPageData.users.findIndex(user => user.id == id);
+                    indexPageData.users.splice(index, 1);
                 })
                 .catch(error => {
                     console.log(error);
