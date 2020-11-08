@@ -73,7 +73,7 @@
     Vue.component('users-list', {
         props: ['user'],
         template: `<tr>
-                        <td>{{user.id}}</td>
+                        <td>#{{user.id}}</td>
                         <td>{{user.name}}</td>
                         <td>{{user.email}}</td>
                         <td>
@@ -85,6 +85,10 @@
                     </tr>`,
         methods: {
             deleteUser(id) {
+
+                if(!confirm("Do you really want to delete that poor User, ID #%s?", id)) {
+                    return false;
+                }
 
                 var data = {
                     data: {
